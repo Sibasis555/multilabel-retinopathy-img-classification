@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Prediction</title>
+</head>
+<body>
+    <h1>Image Upload and Prediction</h1>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <input type="submit" value="Predict">
+    </form>
+
+    {% if retinopathy_pred %}
+    <h2>Prediction Result:</h2>
+    <p>{{ retinopathy_pred }}</p>
+    <p>{{ edima_pred }}</p>
+    <!-- <img src="{{ img_path }}" alt="Uploaded Image" width="300"> -->
+    <img src="{{ url_for('static', filename=img_path) }}" alt="Uploaded Image" width="300">
+    {% endif %}
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Image Upload and Display</title>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+
+    {% if uploaded %}
+    <h2>Uploaded Image:</h2>
+    <img src="{{ filename }}" alt="Uploaded Image">
+    {% endif %}
+</body>
+</html> -->
