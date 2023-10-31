@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_from_directory
 import mysql.connector
 from PIL import Image
 import numpy as np
@@ -87,13 +87,10 @@ def index():
             cursor.execute("INSERT INTO retinopathy_grades (image_file) VALUES (%s)",[img_file])
 
             # Preprocess the input image
-            # print("image path",img_path)
             processed_img = preprocess_image(img_path)
-            # print("image_data",processed_img.shape)
             # Perform prediction using your prediction function
-            # Make predictions
             preds = trained_model(processed_img)
-            # print(preds)
+            
             pred_retinopathy=int(torch.argmax(preds['retinopathy'][0]))
             pred_edima=int(torch.argmax(preds['edima'][0]))
             retinopathy_pred = retinopathy_grade[pred_retinopathy]
@@ -104,6 +101,7 @@ def index():
             # prediction = class_labels[predicted_class_index]
 
             cursor.execute("UPDATE retinopathy_grades SET retinopathy_pred = %s, edima_pred = %s WHERE image_file = %s",[retinopathy_pred, edima_pred, img_file])
+            connection.commit()
             cursor.close()
             return render_template("index.html", uploaded= True, retinopathy_pred = retinopathy_pred, edima_pred = edima_pred, img_path = img_path)
     # fetch all data stored in db
@@ -113,7 +111,10 @@ def index():
     cursor.close()
     print(birds)
     return render_template('index.html', uploaded=False)
+
+@app.route('/<img_path>')
+def send_image(img_path):
+    return send_from_directory("artifacts", img_path)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-
-
